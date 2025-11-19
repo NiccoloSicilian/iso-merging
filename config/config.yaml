@@ -17,7 +17,7 @@ port: 12355
 device: "cuda"
 batch_size: 32
 data_location: "datasets"
-model_location: "models/ckpts"
+model_location: "/kaggle/working/models"
 masks_location: "models/masks"
 save_subfolder: ""
 
