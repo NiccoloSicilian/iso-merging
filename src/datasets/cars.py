@@ -68,7 +68,7 @@ class PytorchStanfordCars(VisionDataset):
         if download:
             self.download()
         '''
-        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa "+self.base_folder)
+        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa "+self._base_folder)
         
         if not self._check_exists():
             raise RuntimeError(
