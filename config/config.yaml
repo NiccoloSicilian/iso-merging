@@ -4,7 +4,7 @@ defaults:
 - method: sum
 
 model: ViT-B-16
-num_tasks: 8
+num_tasks: 7
 specify_lambda: None
 
 DATASETS: ''
