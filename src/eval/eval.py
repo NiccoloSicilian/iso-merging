@@ -24,7 +24,7 @@ def eval_single_dataset(image_encoder, dataset_name, args):
     model = ImageClassifier(image_encoder, classification_head)
 
     model.eval()
-
+    print(dataset_name)
     dataset = get_dataset(
         dataset_name,
         model.val_preprocess,
