@@ -23,7 +23,7 @@ def iso_c(task_vectors, config):
                 new_vector[key] = torch.linalg.multi_dot(
                     (
                         U,
-                        torch.diag(S_mean),
+                        torch.diag(S_dm),
                         V,
                     )
                 )
