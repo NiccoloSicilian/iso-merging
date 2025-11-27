@@ -68,11 +68,12 @@ class PytorchStanfordCars(VisionDataset):
         if download:
             self.download()
         '''
+        print(self.base_folder)
+        
         if not self._check_exists():
             raise RuntimeError(
                 "Dataset not found. You can use download=True to download it"
             )
-        print(self.base_folder)
         self._samples = [
             (
                 str(self._images_base_path / annotation["fname"]),
