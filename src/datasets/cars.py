@@ -74,6 +74,7 @@ class PytorchStanfordCars(VisionDataset):
             raise RuntimeError(
                 "Dataset not found. You can use download=True to download it"
             )
+        print(sio.loadmat(self._annotations_mat_path, squeeze_me=True))
         self._samples = [
             (
                 str(self._images_base_path / annotation["fname"]),
