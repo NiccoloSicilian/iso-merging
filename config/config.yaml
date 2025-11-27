@@ -16,7 +16,7 @@ world_size: 1
 port: 12355
 device: "cuda"
 batch_size: 32
-data_location: "datasets"
+data_location: "/kaggle/input"
 model_location: "/kaggle/input/modelsvitb16/other/default/2/models"
 masks_location: "models/masks"
 save_subfolder: ""
