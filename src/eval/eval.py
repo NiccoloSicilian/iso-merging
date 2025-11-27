@@ -189,7 +189,7 @@ def evaluate_task_vector(
         not_best_counter = 0
         for scaling_coef in scaling_coef_range:
             print("\n" * 2)
-            print("=" * 43, f"alpha = {scaling_coef:.2f}", "=" * 43)
+            print("=" * 43, f"alpha = {scaling_coef:.4f}", "=" * 43)
             info[scaling_coef] = evaluate_task_vector_at_coef(
                 task_vector,
                 pretrained_checkpoint,
