@@ -107,15 +107,11 @@ class PytorchStanfordCars(VisionDataset):
     def download(self) -> None:
         if self._check_exists():
             return
-
-        download_and_extract_archive(
-            url="https://ai.stanford.edu/~jkrause/cars/car_devkit.tgz",
-            download_root=str(self._base_folder),
-            md5="c3b158d763b6e2245038c8ad08e45376",
-        )
+        kagglehub.dataset_download("eduardo4jesus/stanford-cars-dataset")
+        
         if self._split == "train":
             download_and_extract_archive(
-                url="https://ai.stanford.edu/~jkrause/car196/cars_train.tgz",
+                url="eduardo4jesus/stanford-cars-dataset",
                 download_root=str(self._base_folder),
                 md5="065e5b463ae28d29e77c1b4b166cfe61",
             )
