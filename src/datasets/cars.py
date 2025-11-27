@@ -128,7 +128,7 @@ class PytorchStanfordCars(VisionDataset):
             )
 
     def _check_exists(self) -> bool:
-        if not (self._base_folder / "devkit").is_dir():
+        if not (self._base_folder / "car_devkit/devkit").is_dir():
             return False
 
         return self._annotations_mat_path.exists() and self._images_base_path.is_dir()
