@@ -10,15 +10,24 @@ def iso_c(task_vectors, config):
         for key in task_vectors[0].vector:
             tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
             new_vector[key] = sum(tvs) / len(tvs)
-
+        
+            dout, din = new_vector[key].shape
+            dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
+            
+            
+                
             if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
+                new_vector[key] += 0.0
+                print("USING NESTED DM")
+                for v in tvs:
+                    U, S, V = torch.linalg.svd(v, full_matrices=False)
+                    S_dm = torch.full_like(S,dinDoutRatio)
+                    new_vector[key] += torch.linalg.multi_dot((U,torch.diag(S_dm), V,)
+                '''
                 new_vector[key] *= len(tvs)
                 U, S, V = torch.linalg.svd(new_vector[key], full_matrices=False)
                 S_mean = torch.ones_like(S) * S.mean()
-                dout, din = new_vector[key].shape
                 I = torch.full_like(S, 1.0)
-                dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
-                S_dm = torch.full_like(S,dinDoutRatio)
                 print(new_vector[key].shape,S_mean.shape,S_dm.shape, "USING DM")
                 new_vector[key] = torch.linalg.multi_dot(
                     (
@@ -27,6 +36,7 @@ def iso_c(task_vectors, config):
                         V,
                     )
                 )
+                '''
 
     return new_vector
 
