@@ -19,11 +19,11 @@ def iso_c(task_vectors, config):
                 I = torch.full_like(S, 1.0)
                 dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
                 S_dm = torch.full_like(S,dinDoutRatio)
-                print(new_vector[key].shape,S_mean.shape,S_dm.shape, "USING Identity")
+                print(new_vector[key].shape,S_mean.shape,S_dm.shape, "USING MEAN")
                 new_vector[key] = torch.linalg.multi_dot(
                     (
                         U,
-                        torch.diag(I),
+                        torch.diag(S_mean),
                         V,
                     )
                 )
