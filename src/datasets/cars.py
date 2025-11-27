@@ -58,12 +58,12 @@ class PytorchStanfordCars(VisionDataset):
         
         if self._split == "train":
             self._annotations_mat_path = devkit / "cars_train_annos.mat"
-            self._images_base_path = self._base_folder / "cars_train"
+            self._images_base_path = self._base_folder / "cars_train/cars_train"
         else:
             self._annotations_mat_path = (
-                self._base_folder / "cars_test_annos_withlabels.mat"
+                devkit / "cars_test_annos.mat"
             )
-            self._images_base_path = self._base_folder / "cars_test"
+            self._images_base_path = self._base_folder / "cars_test/cars_test"
         '''
         if download:
             self.download()
