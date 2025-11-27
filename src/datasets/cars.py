@@ -52,7 +52,6 @@ class PytorchStanfordCars(VisionDataset):
             )
 
         super().__init__(root, transform=transform, target_transform=target_transform)
-
         self._split = verify_str_arg(split, "split", ("train", "test"))
         self._base_folder = pathlib.Path(root) / "stanford_cars"
         devkit = self._base_folder / "devkit"
@@ -65,10 +64,10 @@ class PytorchStanfordCars(VisionDataset):
                 self._base_folder / "cars_test_annos_withlabels.mat"
             )
             self._images_base_path = self._base_folder / "cars_test"
-
+        '''
         if download:
             self.download()
-
+        '''
         if not self._check_exists():
             raise RuntimeError(
                 "Dataset not found. You can use download=True to download it"
