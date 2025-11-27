@@ -17,7 +17,7 @@ def iso_c(task_vectors, config):
                 S_mean = torch.ones_like(S) * S.mean()
                 dout, din = new_vector[key].shape
                 
-                dinDoutRatio = torch.sqrt(torch.tensor(dim1 / dim2, dtype=torch.float32))
+                dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
                 S_dm = torch.full_like(S,dinDoutRatio)
                 print(new_vector[key].shape,S_mean.shape,S_dm)
                 new_vector[key] = torch.linalg.multi_dot(
