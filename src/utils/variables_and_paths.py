@@ -7,7 +7,6 @@ OPENCLIP_CACHEDIR = Path(Path.home(), "openclip-cachedir", "open_clip").as_posix
 CACHEDIR = None
 
 ALL_DATASETS = [
-    "Cars",
     "DTD",
     "EuroSAT",
     "GTSRB",
