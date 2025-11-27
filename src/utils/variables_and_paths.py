@@ -10,7 +10,6 @@ ALL_DATASETS = [
     "GTSRB",
     "MNIST",
     "SVHN",
-    "SUN397",
     "STL10",
     "OxfordIIITPet",
     "Flowers102",
