@@ -15,7 +15,7 @@ def iso_c(task_vectors, config):
                 new_vector[key] *= len(tvs)
                 U, S, V = torch.linalg.svd(new_vector[key], full_matrices=False)
                 S_mean = torch.ones_like(S) * S.mean()
-                print(key,S_mean.shape)
+                print(new_vector[key].shape,S_mean.shape)
                 new_vector[key] = torch.linalg.multi_dot(
                     (
                         U,
