@@ -11,13 +11,14 @@ def iso_c(task_vectors, config):
             tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
             new_vector[key] = sum(tvs) / len(tvs)
         
-            dout, din = new_vector[key].shape
-            dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
+            
             
             
                 
             if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
                 new_vector[key] += 0.0
+                dout, din = new_vector[key].shape
+                dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
                 print("USING NESTED DM")
                 for v in tvs:
                     U, S, V = torch.linalg.svd(v, full_matrices=False)
