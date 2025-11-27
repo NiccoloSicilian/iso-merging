@@ -11,7 +11,7 @@ from torchvision.datasets.utils import (
     verify_str_arg,
 )
 from torchvision.datasets.vision import VisionDataset
-
+import kagglehub
 
 class PytorchStanfordCars(VisionDataset):
     """`Stanford Cars <https://ai.stanford.edu/~jkrause/cars/car_dataset.html>`_ Dataset
