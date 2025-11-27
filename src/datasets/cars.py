@@ -53,7 +53,7 @@ class PytorchStanfordCars(VisionDataset):
         
         super().__init__(root, transform=transform, target_transform=target_transform)
         self._split = verify_str_arg(split, "split", ("train", "test"))
-        self._base_folder = pathlib.Path(root) / "stanford_cars"
+        self._base_folder = pathlib.Path(root) / "stanford-cars-dataset"
         devkit = self._base_folder / "devkit"
         
         if self._split == "train":
