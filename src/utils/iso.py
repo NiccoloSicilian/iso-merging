@@ -22,7 +22,7 @@ def iso_c(task_vectors, config):
                 for v in tvs:
                     U, S, V = torch.linalg.svd(v, full_matrices=False)
                     S_dm = torch.full_like(S,dinDoutRatio)
-                    new_vector[key] += torch.linalg.multi_dot((U,torch.diag(S_dm), V,)
+                    new_vector[key] += torch.linalg.multi_dot((U,torch.diag(S_dm), V,))
                 '''
                 new_vector[key] *= len(tvs)
                 U, S, V = torch.linalg.svd(new_vector[key], full_matrices=False)
