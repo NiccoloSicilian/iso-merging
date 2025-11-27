@@ -18,6 +18,7 @@ def my_app(cfg: DictConfig) -> None:
         cfg.DATASETS = ALL_DATASETS[: cfg.num_tasks]
     else:
         cfg.num_tasks = len(cfg.DATASETS)
+    print(cfg.num_tasks)
     cfg.DATASETS_VAL = [dataset + "Val" for dataset in cfg.DATASETS]
     cfg.data_location = os.path.expanduser(cfg.data_location)
     OmegaConf.set_struct(cfg, True)
