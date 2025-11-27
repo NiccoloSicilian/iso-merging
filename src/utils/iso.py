@@ -16,14 +16,14 @@ def iso_c(task_vectors, config):
                 U, S, V = torch.linalg.svd(new_vector[key], full_matrices=False)
                 S_mean = torch.ones_like(S) * S.mean()
                 dout, din = new_vector[key].shape
-                
+                I = torch.ones(S.size())
                 dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
                 S_dm = torch.full_like(S,dinDoutRatio)
                 print(new_vector[key].shape,S_mean.shape,S_dm.shape, "USING SMEAN")
                 new_vector[key] = torch.linalg.multi_dot(
                     (
                         U,
-                        torch.diag(S_mean),
+                        torch.diag(I),
                         V,
                     )
                 )
