@@ -9,7 +9,6 @@ CACHEDIR = None
 ALL_DATASETS = [
     "GTSRB",
     "MNIST",
-    "RESISC45",
     "SVHN",
     "SUN397",
     "STL10",
