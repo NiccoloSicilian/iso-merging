@@ -50,12 +50,12 @@ class PytorchStanfordCars(VisionDataset):
             raise RuntimeError(
                 "Scipy is not found. This dataset needs to have scipy installed: pip install scipy"
             )
-
+        
         super().__init__(root, transform=transform, target_transform=target_transform)
         self._split = verify_str_arg(split, "split", ("train", "test"))
         self._base_folder = pathlib.Path(root) / "stanford_cars"
         devkit = self._base_folder / "devkit"
-
+        
         if self._split == "train":
             self._annotations_mat_path = devkit / "cars_train_annos.mat"
             self._images_base_path = self._base_folder / "cars_train"
@@ -72,7 +72,7 @@ class PytorchStanfordCars(VisionDataset):
             raise RuntimeError(
                 "Dataset not found. You can use download=True to download it"
             )
-
+        print(self.base_folder)
         self._samples = [
             (
                 str(self._images_base_path / annotation["fname"]),
