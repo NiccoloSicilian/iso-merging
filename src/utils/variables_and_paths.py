@@ -21,6 +21,7 @@ ALL_DATASETS = [
     "Food101",
     "RenderedSST2",
     "KMNIST",
+    "STL10",
 ]
 
 DATASETS_8 = ALL_DATASETS[:8]
