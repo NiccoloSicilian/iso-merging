@@ -4,12 +4,39 @@ import math
 def new_method(task_vectors, config):
     pretrained_model = ImageEncoder.load(self.model_name, checkpoint)
     pretrained_model = pretrained_model.to(args.device)
+    dict = dict of model
     
+    with torch.no_grad():
+        new_vector = {}
+        for key in task_vectors[0].vector:
+            tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
+            if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
+                U0,S0,V0 = SVD(dict[key])
+                for tv in tvs:
+                    
+                dout, din = new_vector[key].shape
+                dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
+                new_vector[key] *= len(tvs)
+                U, S, V = torch.linalg.svd(new_vector[key], full_matrices=False)
+                S_mean = torch.ones_like(S) * S.mean()
+                S_dm = torch.full_like(S,dinDoutRatio)
+                I = torch.full_like(S, 1.0)
+                print(new_vector[key].shape,S_mean.shape,S_dm.shape, "USING DM")
+                new_vector[key] = torch.linalg.multi_dot(
+                    (
+                        U,
+                        torch.diag(S_dm),
+                        V,
+                    )
+                )
+                
 def iso_c(task_vectors, config):
     device = config.device
     print("Computing SVD...")
     with torch.no_grad():
         new_vector = {}
+        S_mean = None
+        S_dm = None
         for key in task_vectors[0].vector:
             tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
             new_vector[key] = sum(tvs) / len(tvs)
@@ -45,7 +72,7 @@ def iso_c(task_vectors, config):
                         V,
                     )
                 )
-                
+        print(S_mean, S_dm)
     return new_vector
 
 
