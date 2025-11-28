@@ -16,7 +16,7 @@ def iso_c(task_vectors, config):
             
                 
             if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
-                new_vector[key] = 0.0
+                new_vector[key] = torch.full_like(new_vector[key],0.0)
                 dout, din = new_vector[key].shape
                 dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
                 print("USING NESTED DM")
