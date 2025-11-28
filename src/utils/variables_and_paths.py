@@ -16,12 +16,12 @@ ALL_DATASETS = [
     "EMNIST",
     "FashionMNIST",
     "OxfordIIITPet",
-    "PCAM",
     "FER2013",
     "Food101",
     "RenderedSST2",
     "KMNIST",
     "STL10",
+    "PCAM",
 ]
 
 DATASETS_8 = ALL_DATASETS[:8]
