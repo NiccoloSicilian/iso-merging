@@ -13,7 +13,7 @@ def iso_c(task_vectors, config):
             new_vector[key] = sum(tvs) / len(tvs)
         
             
-            
+            print(key)
             
                 
             if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
