@@ -151,7 +151,7 @@ def evaluate_task_vector(
     elif args.specify_lambda != "None":
         scaling_coef_range = [args.specify_lambda]
     elif args.method.name in ["iso_c", "iso_cts", "TSVM"]:
-        scaling_coef_range = np.linspace(1.0, 3.0, args.n_eval_points)[1:]
+        scaling_coef_range = np.linspace(1.5, 3.0, args.n_eval_points)[1:]
         print("Evaluation", scaling_coef_range)
     else:
         scaling_coef_range = np.linspace(0.7, 1.0, args.n_eval_points)[1:]
