@@ -45,7 +45,7 @@ def iso_c(task_vectors, config):
                 )
         print(S_mean, S_dm)
     return new_vector
-
+'''
 def new_method(task_vectors, config):
     pretrained_model = ImageEncoder.load(self.model_name, checkpoint)
     pretrained_model = pretrained_model.to(args.device)
@@ -74,7 +74,7 @@ def new_method(task_vectors, config):
                         V,
                     )
                 )
-
+'''
 
 @torch.no_grad()
 def iso_cts(task_vectors, config):
