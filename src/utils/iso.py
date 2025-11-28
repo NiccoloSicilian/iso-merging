@@ -1,7 +1,10 @@
 import torch
 import math
 
-
+def new_method(task_vectors, config):
+    pretrained_model = ImageEncoder.load(self.model_name, checkpoint)
+    pretrained_model = pretrained_model.to(args.device)
+    
 def iso_c(task_vectors, config):
     device = config.device
     print("Computing SVD...")
