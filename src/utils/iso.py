@@ -43,6 +43,8 @@ def iso_c(task_vectors, config):
                         V,
                     )
                 )
+            else:
+                print("Skipped")
         print(S_mean, S_dm)
     return new_vector
 '''
