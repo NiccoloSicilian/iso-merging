@@ -10,6 +10,14 @@ def dm_layer_specific(task_vectors, config):
             new_vector[key] = sum(tvs) / len(tvs)
             print("all ",key,task_vectors[0].vector[key].shape)
             '''
+            if 'embedding' in key.lower() and len(new_vector[key].shape) == 2:
+                print("EMBEDDING")
+                new_vector[key] *= len(tvs)
+                rms_norm = torch.sqrt(torch.mean(new_vector[key] ** 2, dim=0, keepdim=True))
+                
+                # Normalize each column by its RMS norm
+                new_vector[key] = new_vector[key] / rms_norm
+            '''
             if len(new_vector[key].shape) == 4:
                 print("CONV")
                 new_vector[key] *= len(tvs)
@@ -37,17 +45,7 @@ def dm_layer_specific(task_vectors, config):
                         # Apply scaling factor
                         transformed[:, :, i, j] = scaling_factor * reconstructed
                 new_vector[key] = transformed
-            '''
-            '''
-            if 'embedding' in key.lower() and len(new_vector[key].shape) == 2:
-                print("EMBEDDING")
-                new_vector[key] *= len(tvs)
-                rms_norm = torch.sqrt(torch.mean(new_vector[key] ** 2, dim=0, keepdim=True))
-                
-                # Normalize each column by its RMS norm
-                new_vector[key] = new_vector[key] / rms_norm
-            '''
-            if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
+            elif len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
                 new_vector[key] *= len(tvs)
                 dout, din = new_vector[key].shape
                 dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
