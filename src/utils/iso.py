@@ -1,6 +1,37 @@
 import torch
 import math
-
+def dm_layer_specific(task_vectors, config):
+    device = config.device
+    print("Computing SVD...")
+    with torch.no_grad():
+        new_vector = {}
+        for key in task_vectors[0].vector:
+          tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
+          new_vector[key] = sum(tvs) / len(tvs)
+          print("all ",key,task_vectors[0].vector[key].shape)
+          if key == embed:
+            new_vector[key] *= len(tvs)
+            rms_norm = torch.sqrt(torch.mean(new_vector[key] ** 2, dim=0, keepdim=True))
+            
+            # Normalize each column by its RMS norm
+            new_vector[key] = new_vector[key] / rms_norm
+          elif len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
+              new_vector[key] *= len(tvs)
+              dout, din = new_vector[key].shape
+              dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
+              U, S, V = torch.linalg.svd(new_vector[key], full_matrices=False)
+              S_dm = torch.full_like(S,dinDoutRatio)
+              print(key,new_vector[key].shape,S_dm.shape, "USING DM")
+              new_vector[key] = torch.linalg.multi_dot(
+                  (
+                      U,
+                      torch.diag(S_dm),
+                      V,
+                  )
+              )
+          else:
+              print("Skipped")
+    return new_vector
 def dm_per_task(task_vectors, config):
     device = config.device
     print("Computing SVD...")
