@@ -6,11 +6,36 @@ def dm_layer_specific(task_vectors, config):
     with torch.no_grad():
         new_vector = {}
         for key in task_vectors[0].vector:
-          tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
-          new_vector[key] = sum(tvs) / len(tvs)
-          print("all ",key,task_vectors[0].vector[key].shape)
-          if len(tensor.shape) == 4:
-              print("CONV")
+            tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
+            new_vector[key] = sum(tvs) / len(tvs)
+            print("all ",key,task_vectors[0].vector[key].shape)
+            if len(tensor.shape) == 4:
+                print("CONV")
+                new_vector[key] *= len(tvs)
+                matrix = new_vector[key]  # [dout, din, k, k]
+                dout, din, k, _ = matrix.shape
+                
+                # Compute scaling factor
+                scaling_factor = 1.0 / (k**2 * torch.sqrt(torch.tensor(dout / din, dtype=matrix.dtype)))
+                
+                # Create output tensor
+                transformed = torch.zeros_like(matrix)
+                
+                # For each spatial position (i, j) in the k×k grid
+                for i in range(k):
+                    for j in range(k):
+                        # Extract the [dout, din] slice at position (i, j)
+                        slice_matrix = matrix[:, :, i, j]  # [dout, din]
+                        
+                        # SVD decomposition
+                        U, S, Vt = torch.linalg.svd(slice_matrix, full_matrices=False)
+                        
+                        # Reconstruct with U @ V^T (ignoring singular values)
+                        reconstructed = U @ Vt
+                        
+                        # Apply scaling factor
+                        transformed[:, :, i, j] = scaling_factor * reconstructed
+                new_vector[key] = transformed
           elif 'embedding' in key.lower() and len(tensor.shape) == 2:
             print("EMBEDDING")
             new_vector[key] *= len(tvs)
