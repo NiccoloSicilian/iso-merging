@@ -36,7 +36,7 @@ def dm_layer_specific(task_vectors, config):
                         # Apply scaling factor
                         transformed[:, :, i, j] = scaling_factor * reconstructed
                 new_vector[key] = transformed
-            elif 'embedding' in key.lower() and len(tensor.shape) == 2:
+            elif 'embedding' in key.lower() and len(new_vector[key].shape) == 2:
                 print("EMBEDDING")
                 new_vector[key] *= len(tvs)
                 rms_norm = torch.sqrt(torch.mean(new_vector[key] ** 2, dim=0, keepdim=True))
