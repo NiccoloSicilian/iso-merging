@@ -9,7 +9,10 @@ def dm_layer_specific(task_vectors, config):
           tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
           new_vector[key] = sum(tvs) / len(tvs)
           print("all ",key,task_vectors[0].vector[key].shape)
-          if key == embed:
+          if len(tensor.shape) == 4:
+              print("CONV")
+          elif 'embedding' in key.lower() and len(tensor.shape) == 2:
+            print("EMBEDDING")
             new_vector[key] *= len(tvs)
             rms_norm = torch.sqrt(torch.mean(new_vector[key] ** 2, dim=0, keepdim=True))
             
