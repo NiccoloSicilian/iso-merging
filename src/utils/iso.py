@@ -2,7 +2,7 @@ import torch
 import math
 def dm_layer_specific(task_vectors, config):
     device = config.device
-    print("Computing SVD...")
+    print("Computing SVD... with dm for emb and conv")
     with torch.no_grad():
         new_vector = {}
         for key in task_vectors[0].vector:
@@ -132,7 +132,7 @@ def dm_whole_vec(task_vectors, config):
 
 def iso_c(task_vectors, config):
     
-    return dm_whole_vec(task_vectors, config)
+    return dm_layer_specific(task_vectors, config)
 '''
 def new_method(task_vectors, config):
     pretrained_model = ImageEncoder.load(self.model_name, checkpoint)
