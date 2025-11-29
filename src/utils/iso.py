@@ -1,49 +1,79 @@
 import torch
 import math
-                
-def iso_c(task_vectors, config):
+
+def dm_per_task(task_vectors, config):
     device = config.device
-    print("Computing SVD...")
-    with torch.no_grad():
-        new_vector = {}
-        S_mean = None
-        S_dm = None
-        for key in task_vectors[0].vector:
-            tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
-            new_vector[key] = sum(tvs) / len(tvs)
-        
-            
-            print("all ",key,task_vectors[0].vector[key].shape)
-            
-                
-            if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
-                
-                new_vector[key] = torch.full_like(new_vector[key],0.0)
-                dout, din = new_vector[key].shape
-                dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
-                print("USING NESTED DM")
-                for v in tvs:
-                    U, S, V = torch.linalg.svd(v, full_matrices=False)
-                    S_dm = torch.full_like(S,dinDoutRatio)
-                    new_vector[key] += torch.linalg.multi_dot((U,torch.diag(S_dm), V,))
-                new_vector[key]=new_vector[key]/len(tvs)
-                dout, din = new_vector[key].shape
-                U, S, V = torch.linalg.svd(new_vector[key], full_matrices=False)
-                S_mean = torch.ones_like(S) * S.mean()
-                S_dm = torch.full_like(S,dinDoutRatio)
-                I = torch.full_like(S, 1.0)
-                print(key,new_vector[key].shape,S_mean.shape,S_dm.shape, "USING Mean")
-                new_vector[key] = torch.linalg.multi_dot(
-                    (
-                        U,
-                        torch.diag(S_mean),
-                        V,
-                    )
-                )
-            else:
-                print("Skipped")
-        print(S_mean, S_dm)
-    return new_vector
+      print("Computing SVD...")
+      with torch.no_grad():
+          new_vector = {}
+          S_mean = None
+          S_dm = None
+          for key in task_vectors[0].vector:
+              tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
+              new_vector[key] = sum(tvs) / len(tvs)
+          
+              
+              print("all ",key,task_vectors[0].vector[key].shape)
+              
+                  
+              if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
+                  
+                  new_vector[key] = torch.full_like(new_vector[key],0.0)
+                  dout, din = new_vector[key].shape
+                  dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
+                  print("USING NESTED DM")
+                  for v in tvs:
+                      U, S, V = torch.linalg.svd(v, full_matrices=False)
+                      S_dm = torch.full_like(S,dinDoutRatio)
+                      new_vector[key] += torch.linalg.multi_dot((U,torch.diag(S_dm), V,))
+                  new_vector[key]=new_vector[key]/len(tvs)
+                  dout, din = new_vector[key].shape
+                  U, S, V = torch.linalg.svd(new_vector[key], full_matrices=False)
+                  S_mean = torch.ones_like(S) * S.mean()
+                  S_dm = torch.full_like(S,dinDoutRatio)
+                  I = torch.full_like(S, 1.0)
+                  print(key,new_vector[key].shape,S_mean.shape,S_dm.shape, "USING Mean")
+                  new_vector[key] = torch.linalg.multi_dot(
+                      (
+                          U,
+                          torch.diag(S_mean),
+                          V,
+                      )
+                  )
+              else:
+                  print("Skipped")
+          print(S_mean, S_dm)
+      return new_vector
+def dm_whole(task_vectors, config):
+    device = config.device
+      print("Computing SVD...")
+      with torch.no_grad():
+          new_vector = {}
+          for key in task_vectors[0].vector:
+              tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
+              new_vector[key] = sum(tvs) / len(tvs)
+              print("all ",key,task_vectors[0].vector[key].shape)
+              if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
+                  new_vector[key] *= len(tvs)
+                  dout, din = new_vector[key].shape
+                  dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
+                  U, S, V = torch.linalg.svd(new_vector[key], full_matrices=False)
+                  S_dm = torch.full_like(S,dinDoutRatio)
+                  print(key,new_vector[key].shape,S_dm.shape, "USING DM")
+                  new_vector[key] = torch.linalg.multi_dot(
+                      (
+                          U,
+                          torch.diag(S_dm),
+                          V,
+                      )
+                  )
+              else:
+                  print("Skipped")
+      return new_vector
+
+def iso_c(task_vectors, config):
+    
+    return dm_whole_vec(task_vectors, config)
 '''
 def new_method(task_vectors, config):
     pretrained_model = ImageEncoder.load(self.model_name, checkpoint)
