@@ -9,6 +9,7 @@ def dm_layer_specific(task_vectors, config):
             tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
             new_vector[key] = sum(tvs) / len(tvs)
             print("all ",key,task_vectors[0].vector[key].shape)
+            '''
             if len(new_vector[key].shape) == 4:
                 print("CONV")
                 new_vector[key] *= len(tvs)
@@ -36,7 +37,8 @@ def dm_layer_specific(task_vectors, config):
                         # Apply scaling factor
                         transformed[:, :, i, j] = scaling_factor * reconstructed
                 new_vector[key] = transformed
-            elif 'embedding' in key.lower() and len(new_vector[key].shape) == 2:
+            '''
+            if 'embedding' in key.lower() and len(new_vector[key].shape) == 2:
                 print("EMBEDDING")
                 new_vector[key] *= len(tvs)
                 rms_norm = torch.sqrt(torch.mean(new_vector[key] ** 2, dim=0, keepdim=True))
