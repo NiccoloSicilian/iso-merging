@@ -2,7 +2,7 @@ import torch
 import math
 def dm_layer_specific(task_vectors, config):
     device = config.device
-    print("Computing SVD... with dm for emb and conv")
+    print("Computing SVD... with dm for not( emb and conv)")
     with torch.no_grad():
         new_vector = {}
         for key in task_vectors[0].vector:
@@ -38,6 +38,7 @@ def dm_layer_specific(task_vectors, config):
                         transformed[:, :, i, j] = scaling_factor * reconstructed
                 new_vector[key] = transformed
             '''
+            '''
             if 'embedding' in key.lower() and len(new_vector[key].shape) == 2:
                 print("EMBEDDING")
                 new_vector[key] *= len(tvs)
@@ -45,7 +46,8 @@ def dm_layer_specific(task_vectors, config):
                 
                 # Normalize each column by its RMS norm
                 new_vector[key] = new_vector[key] / rms_norm
-            elif len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
+            '''
+            if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
                 new_vector[key] *= len(tvs)
                 dout, din = new_vector[key].shape
                 dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
