@@ -20,7 +20,6 @@ def dm_layer_specific(task_vectors, config):
             '''
             if len(new_vector[key].shape) == 4:
                 print("CONV")
-                new_vector[key] *= len(tvs)
                 matrix = new_vector[key]  # [dout, din, k, k]
                 dout, din, k, _ = matrix.shape
                 
@@ -46,7 +45,6 @@ def dm_layer_specific(task_vectors, config):
                         transformed[:, :, i, j] = scaling_factor * reconstructed
                 new_vector[key] = transformed
             elif len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
-                new_vector[key] *= len(tvs)
                 dout, din = new_vector[key].shape
                 dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
                 U, S, V = torch.linalg.svd(new_vector[key], full_matrices=False)
