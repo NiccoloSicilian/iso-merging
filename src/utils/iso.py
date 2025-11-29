@@ -2,7 +2,7 @@ import torch
 import math
 def dm_layer_specific(task_vectors, config):
     device = config.device
-    print("Computing SVD... with dm for not( emb and conv)")
+    print("Computing SVD... with dm for not( emb )and conv")
     with torch.no_grad():
         new_vector = {}
         for key in task_vectors[0].vector:
