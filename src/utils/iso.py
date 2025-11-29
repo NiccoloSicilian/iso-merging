@@ -16,7 +16,7 @@ def dm_layer_specific(task_vectors, config):
                 dout, din, k, _ = matrix.shape
                 
                 # Compute scaling factor
-                scaling_factor = 1.0 / (k**2 * torch.sqrt(torch.tensor(dout / din, dtype=matrix.dtype)))
+                scaling_factor = (1.0 / k**2 )* math.sqrt(dout / din)
                 
                 # Create output tensor
                 transformed = torch.zeros_like(matrix)
