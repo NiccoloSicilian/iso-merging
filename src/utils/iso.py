@@ -36,30 +36,30 @@ def dm_layer_specific(task_vectors, config):
                         # Apply scaling factor
                         transformed[:, :, i, j] = scaling_factor * reconstructed
                 new_vector[key] = transformed
-          elif 'embedding' in key.lower() and len(tensor.shape) == 2:
+        elif 'embedding' in key.lower() and len(tensor.shape) == 2:
             print("EMBEDDING")
             new_vector[key] *= len(tvs)
             rms_norm = torch.sqrt(torch.mean(new_vector[key] ** 2, dim=0, keepdim=True))
             
             # Normalize each column by its RMS norm
             new_vector[key] = new_vector[key] / rms_norm
-          elif len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
-              new_vector[key] *= len(tvs)
-              dout, din = new_vector[key].shape
-              dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
-              U, S, V = torch.linalg.svd(new_vector[key], full_matrices=False)
-              S_dm = torch.full_like(S,dinDoutRatio)
-              print(key,new_vector[key].shape,S_dm.shape, "USING DM")
-              new_vector[key] = torch.linalg.multi_dot(
-                  (
-                      U,
-                      torch.diag(S_dm),
-                      V,
-                  )
+        elif len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
+            new_vector[key] *= len(tvs)
+            dout, din = new_vector[key].shape
+            dinDoutRatio = torch.sqrt(torch.tensor(dout / din, dtype=torch.float32))
+            U, S, V = torch.linalg.svd(new_vector[key], full_matrices=False)
+            S_dm = torch.full_like(S,dinDoutRatio)
+            print(key,new_vector[key].shape,S_dm.shape, "USING DM")
+            new_vector[key] = torch.linalg.multi_dot(
+              (
+                  U,
+                  torch.diag(S_dm),
+                  V,
               )
-          else:
-              print("Skipped")
-    return new_vector
+            )
+        else:
+            print("Skipped")
+        return new_vector
 def dm_per_task(task_vectors, config):
     device = config.device
     print("Computing SVD...")
