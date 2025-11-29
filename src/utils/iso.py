@@ -2,22 +2,22 @@ import torch
 import math
 def dm_layer_specific(task_vectors, config):
     device = config.device
-    print("Computing SVD... with dm for emb and conv divided by len(tvs)")
+    print("Computing SVD... with dm for not(emb) and conv divided by len(tvs)")
     with torch.no_grad():
         new_vector = {}
         for key in task_vectors[0].vector:
             tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
             new_vector[key] = sum(tvs) / len(tvs)
             print("all ",key,task_vectors[0].vector[key].shape)
-            
+            '''
             if 'embedding' in key.lower() and len(new_vector[key].shape) == 2:
                 print("EMBEDDING")
                 rms_norm = torch.sqrt(torch.mean(new_vector[key] ** 2, dim=0, keepdim=True))
                 
                 # Normalize each column by its RMS norm
                 new_vector[key] = new_vector[key] / rms_norm
-        
-            elif len(new_vector[key].shape) == 4:
+            '''
+            if len(new_vector[key].shape) == 4:
                 print("CONV")
                 matrix = new_vector[key]  # [dout, din, k, k]
                 dout, din, k, _ = matrix.shape
