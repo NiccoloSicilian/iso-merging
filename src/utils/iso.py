@@ -9,7 +9,7 @@ def dm_layer_specific(task_vectors, config):
             tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
             new_vector[key] = sum(tvs) / len(tvs)
             print("all ",key,task_vectors[0].vector[key].shape)
-            if len(tensor.shape) == 4:
+            if len(new_vector[key].shape) == 4:
                 print("CONV")
                 new_vector[key] *= len(tvs)
                 matrix = new_vector[key]  # [dout, din, k, k]
