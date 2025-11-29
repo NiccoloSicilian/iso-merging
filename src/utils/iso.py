@@ -44,7 +44,7 @@ def dm_per_task(task_vectors, config):
               print("Skipped")
       print(S_mean, S_dm)
     return new_vector
-def dm_whole(task_vectors, config):
+def dm_whole_vec(task_vectors, config):
     device = config.device
     print("Computing SVD...")
     with torch.no_grad():
