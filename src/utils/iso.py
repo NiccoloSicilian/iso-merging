@@ -474,7 +474,7 @@ def dm_whole_net_module(task_vectors, config):
       module_net = build_clip_vit_network_module (list_layer,copy.deepcopy(new_vector))
       module_net['network'].get_dualitymap()()
     
-    return flatten_nested_dicts(module_net['network'].get_dualitymap()())
+    return flatten_and_move_to_device(module_net['network'].get_dualitymap()())
 def dm_whole_vec(task_vectors, config):
     device = config.device
     print("Computing SVD... with dm on whole veec")
