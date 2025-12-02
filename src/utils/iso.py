@@ -446,6 +446,7 @@ def dm_whole_net_module(task_vectors, config):
           list_layer.append(key)
           tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
           new_vector[key] = sum(tvs) / len(tvs)
+          print(new_vector[key].shape)
       module_net = build_clip_vit_network_module (list_layer, new_vector)
       print(module_net['network'].get_dualitymap()())
     return new_vector
