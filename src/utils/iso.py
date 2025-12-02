@@ -461,7 +461,7 @@ def dm_per_task(task_vectors, config):
     return new_vector
 def dm_whole_net_module(task_vectors, config):
     device = config.device
-    print("Computing SVD... with dm on whole veec")
+    print("Computing SVD... with dm of module of whole network")
     with torch.no_grad():
       new_vector = {}
       list_layer = []
