@@ -63,15 +63,15 @@ class Module:
         return self.dualize
 
 
-def create_linear_mod(g, name):
+def create_linear_mod(g, name, mass):
     def linear_dualize():
         U, S, Vt = torch.linalg.svd(g, full_matrices=False)
         return {name: U @ Vt * sqrt(g.shape[0] / g.shape[1])}
-    M = Module(0.5, 1, linear_dualize)
+    M = Module(mass, 1, linear_dualize)
     return M
 
 
-def create_conv2d_mod(g, name):
+def create_conv2d_mod(g, name, mass):
     def conv_dualize():
         matrix = g
         dout, din, k, _ = matrix.shape
@@ -86,15 +86,15 @@ def create_conv2d_mod(g, name):
                 reconstructed = U @ Vt
                 transformed[:, :, i, j] = scaling_factor * reconstructed
         return{name: transformed}
-    M = Module(0.5, 1, conv_dualize)
+    M = Module(mass, 1, conv_dualize)
     return M
 
 
-def create_embedding_mod(g, name):
+def create_embedding_mod(g, name,mass):
     def embedding_dualize():
         rms_norm = torch.sqrt(torch.mean(g ** 2, dim=0, keepdim=True))
         return {name: g / rms_norm}
-    M = Module(0.5, 1, embedding_dualize)
+    M = Module(mass, 1, embedding_dualize)
     return M
 def concatenate(M1, M2):
     M = Module(M1.get_mass() + M2.get_mass(), 
@@ -128,7 +128,7 @@ def compose(M2, M1):
     return M
 
 import random
-def build_clip_vit_network_module(layer_names, grads):
+def build_clip_vit_network_module(layer_names, grads, masses):
     """
     Build a modular duality network for CLIP ViT-B-16.
     
@@ -159,15 +159,15 @@ def build_clip_vit_network_module(layer_names, grads):
         # Skip biases, layer norms, and non-trainable parameters
         if any(skip in name for skip in ['bias', 'ln_', 'class_embedding', 'logit_scale']):
             continue
-        
+        mass = masses[name]
         # Visual conv1
         if 'visual.conv1.weight' in name:
-            module_map['visual_conv1'] = create_conv2d_mod(grads[name], name)
+            module_map['visual_conv1'] = create_conv2d_mod(grads[name], name, mass)
             print(f"✓ visual_conv1: Conv2D module")
         
         # Visual projection
         elif 'visual.proj' in name and 'out_proj' not in name:
-            module_map['visual_proj'] = create_linear_mod(grads[name], name)
+            module_map['visual_proj'] = create_linear_mod(grads[name], name,mass)
             print(f"✓ visual_proj: Linear module")
         
         # Visual positional embedding
@@ -176,7 +176,7 @@ def build_clip_vit_network_module(layer_names, grads):
         
         # Text token embedding
         elif 'token_embedding.weight' in name:
-            module_map['token_embedding'] = create_embedding_mod(grads[name],name)
+            module_map['token_embedding'] = create_embedding_mod(grads[name],name,mass)
             print(f"✓ token_embedding: Embedding module")
         
         # Text positional embedding
@@ -185,7 +185,7 @@ def build_clip_vit_network_module(layer_names, grads):
         
         # Text projection
         elif 'text_projection' in name:
-            module_map['text_projection'] = create_linear_mod(grads[name],name)
+            module_map['text_projection'] = create_linear_mod(grads[name],name,mass)
             print(f"✓ text_projection: Linear module")
         
         # Visual transformer blocks
@@ -208,22 +208,22 @@ def build_clip_vit_network_module(layer_names, grads):
             if 'attn.in_proj_weight' in name:
                 key = f'{block_name}_attn_in'
                 if key not in module_map:
-                    module_map[key] = create_linear_mod(grads[name], name)
+                    module_map[key] = create_linear_mod(grads[name], name,mass)
                     print(f"✓ {key}: Linear module")
             elif 'attn.out_proj.weight' in name:
                 key = f'{block_name}_attn_out'
                 if key not in module_map:
-                    module_map[key] = create_linear_mod(grads[name],name)
+                    module_map[key] = create_linear_mod(grads[name],name,mass)
                     print(f"✓ {key}: Linear module")
             elif 'mlp.c_fc.weight' in name:
                 key = f'{block_name}_mlp_fc'
                 if key not in module_map:
-                    module_map[key] = create_linear_mod(grads[name],name)
+                    module_map[key] = create_linear_mod(grads[name],name,mass)
                     print(f"✓ {key}: Linear module")
             elif 'mlp.c_proj.weight' in name:
                 key = f'{block_name}_mlp_proj'
                 if key not in module_map:
-                    module_map[key] = create_linear_mod(grads[name],name)
+                    module_map[key] = create_linear_mod(grads[name],name,mass)
                     print(f"✓ {key}: Linear module")
     
     # ========================================================================
@@ -465,15 +465,19 @@ def dm_whole_net_module(task_vectors, config):
     with torch.no_grad():
       new_vector = {}
       list_layer = []
+      masses = {}
       for key in task_vectors[0].vector:
           list_layer.append(key)
           tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
           new_vector[key] = sum(tvs) / len(tvs)
-          if len(new_vector[key].shape)>= 2:
+          masses[key] = 0.5
+          if len(new_vector[key].shape)>= 2 and "text_projection" not in key:
               U, S, V = torch.linalg.svd(new_vector[key])
-              S_mean = torch.ones_like(S) * S.mean()
-              print(S_mean[:2])
-      module_net = build_clip_vit_network_module (list_layer,copy.deepcopy(new_vector))
+              S_max = S.max()
+              masses[key] = S_max
+              print(S_max)
+              
+      module_net = build_clip_vit_network_module (list_layer,copy.deepcopy(new_vector), masses)
       module_net['network'].get_dualitymap()()
       module_vec = flatten_and_move_to_device(module_net['network'].get_dualitymap()())
       for key in module_vec:
