@@ -17,21 +17,29 @@ def scale_nested(scalar, data):
         return tuple(scale_nested(scalar, x) for x in data)
     else:
         raise TypeError(f"Unsupported type: {type(data)}")
-def flatten_nested_dicts(nested):
+import torch
+
+def flatten_and_move_to_device(nested, device='cuda:0', clone=True):
     """
-    Recursively flatten nested tuples of dictionaries into a single dictionary.
+    Recursively flatten nested tuples of dictionaries into a single dictionary,
+    move all tensors to the specified device, optionally clone them.
     """
     flat_dict = {}
     
     if isinstance(nested, dict):
-        flat_dict.update(nested)
+        for k, v in nested.items():
+            if clone:
+                flat_dict[k] = v.clone().to(device)
+            else:
+                flat_dict[k] = v.to(device)
     elif isinstance(nested, tuple):
         for item in nested:
-            flat_dict.update(flatten_nested_dicts(item))
+            flat_dict.update(flatten_and_move_to_device(item, device, clone))
     else:
         raise TypeError(f"Unexpected type: {type(nested)}")
     
     return flat_dict
+
 
 class Module:
     def __init__(self, mass, sensitivity, dualize=None):
