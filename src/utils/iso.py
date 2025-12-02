@@ -471,13 +471,13 @@ def dm_whole_net_module(task_vectors, config):
           tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
           avg= 0
           masses[key] = 0.5
+          new_vector[key] = sum(tvs) / len(tvs)
           if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
               for tv in tvs:
                   U, S, V = torch.linalg.svd(tv, full_matrices=False)
                   S_max = S.diag().max()
                   avg += S_max
               S_mean = avg/len(tvs)
-              new_vector[key] = sum(tvs) / len(tvs)
               masses[key] = S_mean
           
               
