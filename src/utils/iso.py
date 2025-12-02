@@ -162,7 +162,6 @@ def build_clip_vit_network_module(layer_names, grads):
         
         # Visual conv1
         if 'visual.conv1.weight' in name:
-            grads[name] = torch.rand(2, 2,2,2)
             module_map['visual_conv1'] = create_conv2d_mod(grads[name], name)
             print(f"✓ visual_conv1: Conv2D module")
         
