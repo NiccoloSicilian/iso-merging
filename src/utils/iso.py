@@ -469,10 +469,10 @@ def dm_whole_net_module(task_vectors, config):
           list_layer.append(key)
           tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
           new_vector[key] = sum(tvs) / len(tvs)
-          print(new_vector[key].shape)
-          U, S, V = torch.linalg.svd(new_vector[key])
-          S_mean = torch.ones_like(S) * S.mean()
-          print(S_mean[:2])
+          if len(new_vector[key].shape)>= 2:
+              U, S, V = torch.linalg.svd(new_vector[key])
+              S_mean = torch.ones_like(S) * S.mean()
+              print(S_mean[:2])
       module_net = build_clip_vit_network_module (list_layer,copy.deepcopy(new_vector))
       module_net['network'].get_dualitymap()()
       module_vec = flatten_and_move_to_device(module_net['network'].get_dualitymap()())
