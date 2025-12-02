@@ -472,6 +472,7 @@ def dm_whole_net_module(task_vectors, config):
           new_vector[key] = sum(tvs) / len(tvs)
           masses[key] = 0.5
           if len(task_vectors[0].vector[key].shape)== 2 and "text_projection" not in key:
+              print( key)
               U, S, V = torch.linalg.svd(new_vector[key])
               S_max = S.diag().max()
               masses[key] = S_max
