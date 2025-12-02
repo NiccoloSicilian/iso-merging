@@ -17,6 +17,21 @@ def scale_nested(scalar, data):
         return tuple(scale_nested(scalar, x) for x in data)
     else:
         raise TypeError(f"Unsupported type: {type(data)}")
+def flatten_nested_dicts(nested):
+    """
+    Recursively flatten nested tuples of dictionaries into a single dictionary.
+    """
+    flat_dict = {}
+    
+    if isinstance(nested, dict):
+        flat_dict.update(nested)
+    elif isinstance(nested, tuple):
+        for item in nested:
+            flat_dict.update(flatten_nested_dicts(item))
+    else:
+        raise TypeError(f"Unexpected type: {type(nested)}")
+    
+    return flat_dict
 
 class Module:
     def __init__(self, mass, sensitivity, dualize=None):
