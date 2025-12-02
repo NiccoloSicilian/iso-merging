@@ -8,7 +8,7 @@ def dm_layer_specific(task_vectors, config):
         for key in task_vectors[0].vector:
             tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
             new_vector[key] = sum(tvs) / len(tvs)
-            print("all ",key,task_vectors[0].vector[key].shape)
+            print(key)
             '''
             if 'embedding' in key.lower() and len(new_vector[key].shape) == 2:
                 print("EMBEDDING")
@@ -56,8 +56,7 @@ def dm_layer_specific(task_vectors, config):
                       V,
                   )
                 )
-            else:
-                print("Skipped")
+            
         return new_vector
 def dm_per_task(task_vectors, config):
     device = config.device
