@@ -474,7 +474,9 @@ def dm_whole_net_module(task_vectors, config):
           models_dualized.append(module_vec)
           
       for key in task_vectors[0].vector:
+          print(key)
           if key in models_dualized[0]:
+              print("MEAN SING VALUE")
               tvs = [dualized_tv[key].to(device) for dualized_tv in models_dualized]
               new_vector[key] = sum(tvs) / len(tvs)
               if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:   
@@ -489,6 +491,7 @@ def dm_whole_net_module(task_vectors, config):
                       )
                   )
           else:
+              print("NOT IN MAP")
               tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
               new_vector[key] = sum(tvs) / len(tvs)
               if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
