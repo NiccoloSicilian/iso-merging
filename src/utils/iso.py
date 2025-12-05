@@ -473,7 +473,7 @@ def dm_whole_net_module(task_vectors, config):
           module_vec = flatten_and_move_to_device(module_net['network'].get_dualitymap()())
           models_dualized.append(module_vec)
       for key in task_vectors[0].vector:
-          tvs = [dualized_tv[key].to(device) for dulized_tv in models_dualized]
+          tvs = [dualized_tv[key].to(device) for dualized_tv in models_dualized]
           new_vector[key] = sum(tvs) / len(tvs)
           if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:   
               U, S, V = torch.linalg.svd(new_vector[key], full_matrices=False)
