@@ -464,8 +464,28 @@ def dm_whole_net_module(task_vectors, config):
     print("Computing SVD... with dm of module of whole network")
     with torch.no_grad():
       new_vector = {}
-      list_layer = []
-      masses = {}
+      list_layer = [ key for key in  task_vectors[0].vector]
+      masses = {key : 0.5 for key in  task_vectors[0].vector}
+      models_dualized = []
+        
+      for task_vector in task_vectors:
+          module_net = build_clip_vit_network_module (list_layer,copy.deepcopy(task_vector.vector), masses)
+          module_vec = flatten_and_move_to_device(module_net['network'].get_dualitymap()())
+          models_dualize.append(module_vec)
+      for key in task_vectors[0].vector:
+          tvs = [dualized_tv[key].to(device) for dulized_tv in models_dualized]
+          new_vector[key] = sum(tvs) / len(tvs)
+          if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:   
+              U, S, V = torch.linalg.svd(new_vector[key], full_matrices=False)
+              S_mean = torch.ones_like(S) * S.mean()
+              new_vector[key] = torch.linalg.multi_dot(
+                  (
+                      U,
+                      torch.diag(S_mean),
+                      V,
+                  )
+              )
+      '''
       for key in task_vectors[0].vector:
           list_layer.append(key)
           tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
@@ -479,13 +499,11 @@ def dm_whole_net_module(task_vectors, config):
                   avg += S_max
               S_mean = avg/len(tvs)
               masses[key] = S_mean
-          
+          for key in module_vec:
+              new_vector[key] = module_vec[key]
+      '''
               
-      module_net = build_clip_vit_network_module (list_layer,copy.deepcopy(new_vector), masses)
-      module_net['network'].get_dualitymap()()
-      module_vec = flatten_and_move_to_device(module_net['network'].get_dualitymap()())
-      for key in module_vec:
-          new_vector[key] = module_vec[key]
+      
       
     
     return new_vector
