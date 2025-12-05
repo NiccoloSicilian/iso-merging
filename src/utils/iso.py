@@ -471,7 +471,7 @@ def dm_whole_net_module(task_vectors, config):
       for task_vector in task_vectors:
           module_net = build_clip_vit_network_module (list_layer,copy.deepcopy(task_vector.vector), masses)
           module_vec = flatten_and_move_to_device(module_net['network'].get_dualitymap()())
-          models_dualize.append(module_vec)
+          models_dualized.append(module_vec)
       for key in task_vectors[0].vector:
           tvs = [dualized_tv[key].to(device) for dulized_tv in models_dualized]
           new_vector[key] = sum(tvs) / len(tvs)
