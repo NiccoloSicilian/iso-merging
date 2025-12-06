@@ -513,17 +513,11 @@ def dm_whole_net_module(task_vectors, config):
           avg= 0
           masses[key] = 0.5
           new_vector[key] = sum(tvs) / len(tvs)
-          if len(task_vectors[0].vector[key].shape) == 2 and "text_projection" not in key:
-              for tv in tvs:
-                  U, S, V = torch.linalg.svd(tv, full_matrices=False)
-                  S_max = S.diag().max()
-                  avg += S_max
-              S_mean = avg/len(tvs)
-              masses[key] = S_mean
-          for key in module_vec:
-              new_vector[key] = module_vec[key]
-
     
+    module_net = build_clip_vit_network_module (list_layer,copy.deepcopy(new_vector), masses)
+    module_vec = flatten_and_move_to_device(module_net['network'].get_dualitymap()())
+    for key in module_vec:
+        new_vector[key] = module_vec[key]
     return new_vector
 def dm_whole_vec(task_vectors, config):
     device = config.device
