@@ -511,7 +511,7 @@ def dm_whole_net_module(task_vectors, config):
           list_layer.append(key)
           tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
           avg= 0
-          masses[key] = 0.5
+          masses[key] = 1.0
           new_vector[key] = sum(tvs) / len(tvs)
     
     module_net = build_clip_vit_network_module (list_layer,copy.deepcopy(new_vector), masses)
