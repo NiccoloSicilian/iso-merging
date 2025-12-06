@@ -465,8 +465,8 @@ def dm_whole_net_module(task_vectors, config):
     with torch.no_grad():
       new_vector = {}
       list_layer = [ key for key in  task_vectors[0].vector]
-      '''
       masses = {key : 0.5 for key in  task_vectors[0].vector}
+      '''
       models_dualized = []
       
       for task_vector in task_vectors:
