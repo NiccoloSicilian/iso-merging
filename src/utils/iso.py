@@ -465,7 +465,7 @@ def dm_whole_net_module(task_vectors, config):
     with torch.no_grad():
       new_vector = {}
       list_layer = [ key for key in  task_vectors[0].vector]
-      masses = {key : 1.0 for key in  task_vectors[0].vector}
+      masses = {key : 0.5 for key in  task_vectors[0].vector}
       '''
       models_dualized = []
       
@@ -511,7 +511,6 @@ def dm_whole_net_module(task_vectors, config):
           list_layer.append(key)
           tvs = [task_vector.vector[key].to(device) for task_vector in task_vectors]
           avg= 0
-          masses[key] = 1.0
           new_vector[key] = sum(tvs) / len(tvs)
     
     module_net = build_clip_vit_network_module (list_layer,copy.deepcopy(new_vector), masses)
