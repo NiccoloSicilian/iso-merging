@@ -465,9 +465,10 @@ def dm_whole_net_module(task_vectors, config):
     with torch.no_grad():
       new_vector = {}
       list_layer = [ key for key in  task_vectors[0].vector]
+      '''
       masses = {key : 0.5 for key in  task_vectors[0].vector}
       models_dualized = []
-        
+      
       for task_vector in task_vectors:
           module_net = build_clip_vit_network_module (list_layer,copy.deepcopy(task_vector.vector), masses)
           module_vec = flatten_and_move_to_device(module_net['network'].get_dualitymap()())
@@ -521,10 +522,7 @@ def dm_whole_net_module(task_vectors, config):
               masses[key] = S_mean
           for key in module_vec:
               new_vector[key] = module_vec[key]
-      '''
-              
-      
-      
+
     
     return new_vector
 def dm_whole_vec(task_vectors, config):
