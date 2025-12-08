@@ -8,10 +8,7 @@ CACHEDIR = None
 
 ALL_DATASETS = [
     
-    "FER2013",
-    "RenderedSST2",
-    "KMNIST",
-    "STL10",
+    
     "PCAM",
 ]
 
