@@ -7,9 +7,25 @@ OPENCLIP_CACHEDIR = Path(Path.home(), "openclip-cachedir", "open_clip").as_posix
 CACHEDIR = None
 
 ALL_DATASETS = [
-    
-    
+    "Food101",
     "PCAM",
+    "FER2013",
+    
+    "GTSRB",
+    "MNIST",
+    "SVHN",
+    "STL10",
+    "OxfordIIITPet",
+    "Flowers102",
+    "CIFAR100",
+    
+    
+    "CIFAR10",
+    
+    "FashionMNIST",
+    "RenderedSST2",
+    "EMNIST",
+    "KMNIST",
 ]
 
 DATASETS_8 = ALL_DATASETS[:8]
