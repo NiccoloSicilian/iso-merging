@@ -68,9 +68,10 @@ class PytorchStanfordCars(VisionDataset):
             self._images_base_path = self._base_folder / "cars_test/cars_test"
             
         print("DOWNLOAD??? ",download)
+        '''
         if False:
             self.download()
-
+        '''
         print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ",self._base_folder)
         
         if not self._check_exists():
