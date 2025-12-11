@@ -64,10 +64,10 @@ class PytorchStanfordCars(VisionDataset):
                 devkit / "cars_test_annos.mat"
             )
             self._images_base_path = self._base_folder / "cars_test/cars_test"
-        '''
+    
         if download:
             self.download()
-        '''
+
         print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ",self._base_folder)
         
         if not self._check_exists():
