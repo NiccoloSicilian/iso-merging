@@ -106,28 +106,72 @@ class PytorchStanfordCars(VisionDataset):
         return pil_image, target
 
     def download(self) -> None:
-        if self._check_exists():
+        """
+        Downloads raw archive and annotation files for the Stanford Cars dataset
+        from the specified Hugging Face repository, imitating the original download logic.
+    
+        Args:
+            split: The split ('train' or 'test') to download.
+            dataset_name: The Hugging Face dataset identifier ("tanganke/stanford_cars").
+            base_folder: The root directory where files will be saved.
+        """
+        split = self._split
+        dataset_name = "tanganke/stanford_cars"
+        base_folder = str(self._base_folder)
+        os.makedirs(base_folder, exist_ok=True)
+        print(f"Starting raw file download for split: {split} from {dataset_name}")
+    
+        # --- 1. Utility Files (Downloaded regardless of split) ---
+    
+        # Corresponds to: url="https://ai.stanford.edu/~jkrause/cars/car_devkit.tgz"
+        devkit_filename = "car_devkit.tgz"
+        print(f"-> Downloading utility file: {devkit_filename}")
+        try:
+            hf_hub_download(
+                repo_id=dataset_name,
+                filename=devkit_filename,
+                local_dir=base_folder,
+                local_dir_use_symlinks=False
+            )
+        except Exception as e:
+            print(f"ERROR: Failed to download {devkit_filename}. Please verify the file exists in the repo. {e}")
             return
-        kagglehub.dataset_download("eduardo4jesus/stanford-cars-dataset")
-        
-        if self._split == "train":
-            download_and_extract_archive(
-                url="eduardo4jesus/stanford-cars-dataset",
-                download_root=str(self._base_folder),
-                md5="065e5b463ae28d29e77c1b4b166cfe61",
+    
+        # --- 2. Split-Specific Files ---
+    
+        if split == "train":
+            # Corresponds to: url="https://ai.stanford.edu/~jkrause/car196/cars_train.tgz"
+            train_filename = "cars_train.tgz"
+            print(f"-> Downloading training images archive: {train_filename}")
+            hf_hub_download(
+                repo_id=dataset_name,
+                filename=train_filename,
+                local_dir=base_folder,
+                local_dir_use_symlinks=False
             )
-        else:
-            download_and_extract_archive(
-                url="https://ai.stanford.edu/~jkrause/car196/cars_test.tgz",
-                download_root=str(self._base_folder),
-                md5="4ce7ebf6a94d07f1952d94dd34c4d501",
+    
+        else:  # split == "test"
+            # Corresponds to: url="https://ai.stanford.edu/~jkrause/car196/cars_test.tgz"
+            test_filename = "cars_test.tgz"
+            print(f"-> Downloading test images archive: {test_filename}")
+            hf_hub_download(
+                repo_id=dataset_name,
+                filename=test_filename,
+                local_dir=base_folder,
+                local_dir_use_symlinks=False
             )
-            download_url(
-                url="https://ai.stanford.edu/~jkrause/car196/cars_test_annos_withlabels.mat",
-                root=str(self._base_folder),
-                md5="b0a2b23655a3edd16d84508592a98d10",
+    
+            # Corresponds to: url="https://ai.stanford.edu/~jkrause/car196/cars_test_annos_withlabels.mat"
+            annotations_filename = "cars_test_annos_withlabels.mat"
+            print(f"-> Downloading test annotations: {annotations_filename}")
+            hf_hub_download(
+                repo_id=dataset_name,
+                filename=annotations_filename,
+                local_dir=base_folder,
+                local_dir_use_symlinks=False
             )
-
+    
+        print("\nDownload process complete. Files are saved in:", os.path.abspath(base_folder))
     def _check_exists(self) -> bool:
         print(self._base_folder / "car_devkit/devkit")
         if not (self._base_folder / "car_devkit/devkit").is_dir():
